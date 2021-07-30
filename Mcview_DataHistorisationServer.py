@@ -304,7 +304,7 @@ while True:     # Main Program LOOP
 					print('Row Size: ' + str(RowNumbers))
 					print('Rows to delete (80%): ' + str(IntRowsToDelete))
 					TotalDimension = TotalDimension + Dfsize
-					Percentage_Dfsize = (Dfsize/63000)*100
+					Percentage_Dfsize = (Dfsize/12315.)*100
 					Percentage_TotalDimension = (TotalDimension/5000000)*100
 					print('Database Dimension: '+ str(Percentage_Dfsize) + ' %') # 66,666
 					print('Total Cells used:' + str(Percentage_TotalDimension) + ' %') # 5,000,000
@@ -312,12 +312,12 @@ while True:     # Main Program LOOP
 
 
 					if Percentage_Dfsize > 95:
-						dfbackup = df_histo.iloc[:4999] #Select The Rows to Save.
+						dfbackup = df_histo.iloc[:5999] #Select The Rows to Save.
 						dfMaster = pd.read_csv('/home/pi/Desktop/Mcview/HRS-Rouen/' + TabName_Gsheet + '.csv' , sep=';')
 						dfnewMaster = pd.concat([dfMaster,dfbackup])
 						dfnewMaster.to_csv('/home/pi/Desktop/Mcview/HRS-Rouen/' + TabName_Gsheet + '.csv' ,sep=';', index=False , encoding='utf-8')
 
-						dfsave = df_histo.iloc[5000:]	#Select rows from line 7000 and save it.
+						dfsave = df_histo.iloc[6000:]	#Select rows from line 7000 and save it.
 						
 						string_Erase = TabName_Gsheet + '!A2:G10000'
 						sh.values_clear(string_Erase)
