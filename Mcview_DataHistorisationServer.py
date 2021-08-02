@@ -192,90 +192,105 @@ while True:     # Main Program LOOP
 	# HRS Rouen
 	try:
 
-		# -x-x-x-x-x-x-x-x--x-x-x-x-x--x-x-x-x-x-x-  HRS Rouen -x-x-x-x-x-x-x--x-x-x-x-x-x-x-x-x-x-x-x-x-x
-		#----Obtain las Transaction ID  -------------------------------------------------------------------------------
-		sh = gc.open_by_key('10Ik_0gKeW-_rbwFFTn8e2xhtpL_wFAvtEZj4AVFkc4Q')     # HRS Rouen- Gsheet ApiKey. 
-		Transactionsheet = sh.get_worksheet(0)                                  # Open Tab 0 From Speadsheet choosed.
-		StartingTransactionID = Transactionsheet.cell(1,2).value                # Get Value from SpreadSheet Tab 0 Cells (1,2)
-		LastTransactionSTR = str(StartingTransactionID)                         # Convert to value to type String.
+		# Section 1 -------------------------------------------------------------------------------
+		sh = gc.open_by_key('10Ik_0gKeW-_rbwFFTn8e2xhtpL_wFAvtEZj4AVFkc4Q')     # P101 HRS Rouen- Gsheet ApiKey. 
+		Transactionsheet = sh.get_worksheet(0)                                  # P102 Open Tab 0 From Speadsheet choosed.
+		StartingTransactionID = Transactionsheet.cell(1,2).value                # P103 Get Value from SpreadSheet Tab 0 Cells (1,2)
+		LastTransactionSTR = str(StartingTransactionID)                         # P104 Convert to value to type String.
+		# END Section 1 ---------------------------------------------------------------------------
 
-		#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-		# First CALL APIs Datamailbox & Google  -------------------------------------------------------------------------------
 
-		# Sync DATA POST
-		Authentication = {'t2mdevid': '87e76678-d393-4bdc-88a4-08cf164b4944','t2mtoken': 'w0DRk9x2GuYXOERMAUUUNc0PDaJRI6Xf0CkDgGbjSONvx5ilQA', 'createTransaction':'true','lastTransactionId':LastTransactionSTR}
-		respuesta = requests.post('https://data.talk2m.com/syncdata', data=Authentication)      # Ewon API Datamailbox Request.
-		respuestajson = respuesta.json()        # Save all Data (Json Request) 
-		TotalDimension = 0                      # Re-initialize TotalDimension Variable.
+		# Section 2 -------------------------------------------------------------------------------
+		Authentication = {'t2mdevid': '87e76678-d393-4bdc-88a4-08cf164b4944','t2mtoken': 'w0DRk9x2GuYXOERMAUUUNc0PDaJRI6Xf0CkDgGbjSONvx5ilQA', 'createTransaction':'true','lastTransactionId':LastTransactionSTR} # P201 Get Ewon Credential
+		respuesta = requests.post('https://data.talk2m.com/syncdata', data=Authentication)      # P202 Ewon API Datamailbox Request.
+		respuestajson = respuesta.json()        												# P203 Save all Data (Json Request) 
+		TotalDimension = 0                      												# P204 Re-initialize TotalDimension Variable.
+		# END Section 2 ---------------------------------------------------------------------------
 
+
+
+		# Section 3 -------------------------------------------------------------------------------
+		TransactionID = respuestajson.get('transactionId')          # P301 Get new Tansaction ID from the ewon API request.
+		LastTransactionSTR = str(TransactionID)                     # P302 Convert Variable to String
+		Transactionsheet = sh.get_worksheet(0)						# P303 Select Spread sheet Tab
+		Transactionsheet.update_cell(1,2, TransactionID)			# P304 Write in Spread sheet Tab 0 cell 1,2 -- New transaction Number
+
+		#### PRINT ZONE ####
 		print('-----------------------------------')
 		print('McView Data Historisation Service')
 		print('-----------------------------------')
-		#Transaction ID Data mailbox
-		TransactionID = respuestajson.get('transactionId')          # Get new Tansaction ID from the ewon API request.
-		LastTransactionSTR = str(TransactionID)                     # Convert Variable to String
-		print('Transaction ID: ' + str(TransactionID))				# Print Variable
-		Transactionsheet = sh.get_worksheet(0)						# Select Spread sheet Tab
-		Transactionsheet.update_cell(1,2, TransactionID)			# Write in Spread sheet Tab 0 cell 1,2 -- New transaction Number
+		print('Transaction ID: ' + str(TransactionID))
+		#### END PRINT ZONE ####
+		# END Section 3 ---------------------------------------------------------------------------
 
+
+
+		# Section 4 -------------------------------------------------------------------------------
 		#Flag.. More Data Available?
-		FLAGMoreData = respuestajson.get('moreDataAvailable')	    # If There is a new packet to call, moreDataAvailable = 1 if no = 0
-		print('More Data Available: ' + str(FLAGMoreData))			# print Variable
-		if FLAGMoreData == True:									# IF Previous Tag = 1, we set Internal Tag "MoreNewData" to 1
-			MoreNewData = 1											# Set tag "MoreNewData" to 1
+		FLAGMoreData = respuestajson.get('moreDataAvailable')	    # P401 If There is a new packet to call, moreDataAvailable = 1 if no = 0
+		if FLAGMoreData == True:									# P402 IF Previous Tag = 1, we set Internal Tag "MoreNewData" to 1
+			MoreNewData = 1											# P403 Set tag "MoreNewData" to 1
+		
 		#Ewon tags inside Reponse 
-		ewonTags = respuestajson.get('ewons')[0].get('tags')		# Select Ewon To Grab Data... This is Always 0 since we have 1 eWon per HRS
-		range_ewontagsinResponse = len(ewonTags)					# Obtain the Lenght of Data inside the Json Package
-		contador = range_ewontagsinResponse							# Give Lenght Value to tag "Contador" 
-		print('Response Lenght: '+ str(range_ewontagsinResponse))	# print Lenght of Data inside Json Package
-		print('-----------------------------------')				# print Separation Lines
-		print('\n')													# print Jump Line
+		ewonTags = respuestajson.get('ewons')[0].get('tags')		# P404 Select Ewon To Grab Data... This is Always 0 since we have 1 eWon per HRS
+		range_ewontagsinResponse = len(ewonTags)					# P405 Obtain the Lenght of Data inside the Json Package
+		contador = range_ewontagsinResponse							# P406 Give Lenght Value to tag "Contador" 
+		
+		#### PRINT ZONE ####
+		print('More Data Available: ' + str(FLAGMoreData))
+		print('Response Lenght: '+ str(range_ewontagsinResponse))
+		print('-----------------------------------')
+		print('\n')
+		#### END PRINT ZONE ####
+		# END Section 4 ---------------------------------------------------------------------------
 
 
-		for x in range(0,range_ewontagsinResponse):					# For LOOP from 0 to Lenght of Data Recived inside Json Package
-			sleep(2.5)												# Sleep 2.5 sec
-			print('--------------------')							# print Jump Line
-			ix = respuestajson.get('ewons')[0].get('tags')[x]		# ix --> store Tag X from ewon 0 
-			print('\n')												# print Jump Line
-			Mcview_TagID = ix['ewonTagId']							# Set eWon TAGID to "McView_TagID" Variable... This will Help to identify it from our Exchange Table.
-			print('Mcview TagID: ' + str(Mcview_TagID))				# print Variable "Mcview TagID"
-			print('Loop #: ' + str(contador))						# Prin value from our FOR LOOP
+		
+		# Section 5 -------------------------------------------------------------------------------
+		for x in range(0,range_ewontagsinResponse):					# P501 For LOOP from 0 to Lenght of Data Recived inside Json Package
+			sleep(2.5)												# P502 Sleep 2.5 sec
+			print('--------------------')
+			ix = respuestajson.get('ewons')[0].get('tags')[x]		# P503 ix --> store Tag X from ewon 0 
+			print('\n')	
+			Mcview_TagID = ix['ewonTagId']							# P504 Set eWon TAGID to "McView_TagID" Variable... This will Help to identify it from our Exchange Table.
+			print('Mcview TagID: ' + str(Mcview_TagID))
+			print('Loop #: ' + str(contador))
 
 			#### --- availability Report --- ####
-			if Mcview_TagID == 417:
-				HRSCNRstatus = ix['value']
+			if Mcview_TagID == 417:									# P505 
+				HRSCNRstatus = ix['value']							# P506
 				
 
-			if 'history' in ix:
+			if 'history' in ix:										# P507
 
-				IDArray = IDsGsheet[Mcview_TagID]		# Read Array Id MCview
-				IndexNumber = IDArray[0]				# Read Index Number ID
-				TabName_Gsheet = IDArray[1]				# Read Tab name Id Mcview         
-				DescriptionTag = IDArray[2]				# Read Description Tag
+				IDArray = IDsGsheet[Mcview_TagID]		# P508 Read Array Id MCview
+				IndexNumber = IDArray[0]				# P509 Read Index Number ID
+				TabName_Gsheet = IDArray[1]				# P510 Read Tab name Id Mcview         
+				DescriptionTag = IDArray[2]				# P511 Read Description Tag
 
-				newdata = ix['history']
-				dfbrut = pd.DataFrame(newdata)
-				df = dfbrut.loc[:,['value', 'date']]
-				df['TagId'] = Mcview_TagID
-				df['date'] = pd.to_datetime(df.date)
-				df['Hour'] = df.date.dt.hour
-				df['Month'] = df.date.dt.month
-				df['Tagname'] = TabName_Gsheet
-				df['Extrainfo'] = DescriptionTag
+				newdata = ix['history']					# P512
+				dfbrut = pd.DataFrame(newdata)			# P513
+				df = dfbrut.loc[:,['value', 'date']]	# P514
+				df['TagId'] = Mcview_TagID				# P515
+				df['date'] = pd.to_datetime(df.date)	# P516
+				df['Hour'] = df.date.dt.hour			# P517
+				df['Month'] = df.date.dt.month			# P518
+				df['Tagname'] = TabName_Gsheet			# P519
+				df['Extrainfo'] = DescriptionTag		# P520
 				
-				df.rename(columns = {'value':'Value'}, inplace=True)
-				df.rename(columns = {'date':'TimeStr'}, inplace=True)
-				custom_sort = ['Value', 'TimeStr', 'TagId', 'Hour', 'Tagname', 'Month','Extrainfo']
+				df.rename(columns = {'value':'Value'}, inplace=True)	# P521
+				df.rename(columns = {'date':'TimeStr'}, inplace=True)	# P522
+				custom_sort = ['Value', 'TimeStr', 'TagId', 'Hour', 'Tagname', 'Month','Extrainfo']	# P523
 
 
 				print('Index #: ' + str(IndexNumber))
 
-				if IndexNumber != 99:
+				if IndexNumber != 99:			# P524
 
-					Step1 = 0
-					while Step1 == 0:
-						try:
+					Step1 = 0			# P525
+					while Step1 == 0:	# P526
+						try:			# P527
 							df_histo = Read_DF_inGsheets(IndexNumber)
 							Step1 = 1
 						except:
@@ -289,7 +304,7 @@ while True:     # Main Program LOOP
 					print('Row Size: ' + str(RowNumbers))
 					print('Rows to delete (80%): ' + str(IntRowsToDelete))
 					TotalDimension = TotalDimension + Dfsize
-					Percentage_Dfsize = (Dfsize/63000)*100
+					Percentage_Dfsize = (Dfsize/12315.)*100
 					Percentage_TotalDimension = (TotalDimension/5000000)*100
 					print('Database Dimension: '+ str(Percentage_Dfsize) + ' %') # 66,666
 					print('Total Cells used:' + str(Percentage_TotalDimension) + ' %') # 5,000,000
@@ -297,15 +312,14 @@ while True:     # Main Program LOOP
 
 
 					if Percentage_Dfsize > 95:
-						dfbackup = df_histo.iloc[:4999] #Select The Rows to Save.
+						dfbackup = df_histo.iloc[:5999] #Select The Rows to Save.
 						dfMaster = pd.read_csv('/home/pi/Desktop/Mcview/HRS-Rouen/' + TabName_Gsheet + '.csv' , sep=';')
 						dfnewMaster = pd.concat([dfMaster,dfbackup])
 						dfnewMaster.to_csv('/home/pi/Desktop/Mcview/HRS-Rouen/' + TabName_Gsheet + '.csv' ,sep=';', index=False , encoding='utf-8')
 
-						dfsave = df_histo.iloc[5000:]	#Select rows from line 7000 and save it.
+						dfsave = df_histo.iloc[6000:]	#Select rows from line 7000 and save it.
 						
 						string_Erase = TabName_Gsheet + '!A2:G10000'
-						# sh.values_clear('PT STK 2!A2:B3') --- < Example
 						sh.values_clear(string_Erase)
 						
 						#After clearing Cells in google Sheet, we concatenate our 2 DF for post it.
@@ -343,7 +357,7 @@ while True:     # Main Program LOOP
 			print('--------------------')
 			print('\n')
 
-		#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+		# END Section 5 ---------------------------------------------------------------------------
 
 
 		# More Data LOOP -------------------------------------------------------------------------------
