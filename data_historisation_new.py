@@ -104,40 +104,40 @@ while True :
 						path = 'C:/Users/admin/Desktop/McView_SKit/HRS_ROUEN_CSV_FILES/' + str(exchange_table['Name GSpreadSheet'][i]) + '.csv'		# Path to the csv file
 				
 				dataframe_length_measure = pd.DataFrame(wks.get_all_records())		# Get all data from the selected worksheet
-				dataframe_length_measure = dataframe_length_measure.append(df)		# Length of data
+				dataframe_length_measure = dataframe_length_measure.append(df)		# Length of data in worksheet + recieved data
 
 
 				# Writing data to the selected worksheet and deleting half of it if if it exceeds the max column length
 				if len(dataframe_length_measure) >= total_column_length :
-					df_write_to_csv = dataframe_length_measure[:int(total_column_length/2)]		# 
+					df_write_to_csv = dataframe_length_measure[:int(total_column_length/2)]		# get half of the data to store in a csv file
 					print('length dataframe to write in csv file :', len(df_write_to_csv))
 					print('dataframe to write in csv file :', df_write_to_csv)
 					if os.stat(path).st_size == 0:		# if csv file is empty
-						df_write_to_csv.to_csv(path, sep=';' ,index=False, encoding='utf-8')
-						wks.delete_rows(2, int(total_column_length/2) + 1)
-						dataframe = pd.DataFrame(wks.get_all_records())
-						dataframe = dataframe.append(df)
-						set_with_dataframe(wks, dataframe)
+						df_write_to_csv.to_csv(path, sep=';' ,index=False, encoding='utf-8')		# write to csv file
+						wks.delete_rows(2, int(total_column_length/2) + 1)		# Delete data from the worksheet
+						dataframe = pd.DataFrame(wks.get_all_records())		# Get the remaining data the from worksheet into a DataFrame
+						dataframe = dataframe.append(df)		# Append the recieved data into the the DataFrame
+						set_with_dataframe(wks, dataframe)		# Write to the worksheet
 						#print('dataframe is :', dataframe)
 						print('df is :', df)
 
 
 					else :		# if csv file isn't empty
-						df_read_csv = pd.read_csv(path, sep=';', encoding='utf-8')
-						dfconcat = pd.concat([df_read_csv, df_write_to_csv])
-						dfconcat.to_csv(path, sep=';', index=False, encoding='utf-8')
-						wks.delete_rows(2, int(total_column_length/2) + 1)
-						dataframe = pd.DataFrame(wks.get_all_records())
-						dataframe = dataframe.append(df)
-						set_with_dataframe(wks, dataframe)
+						df_read_csv = pd.read_csv(path, sep=';', encoding='utf-8')		# Get csv file content
+						dfconcat = pd.concat([df_read_csv, df_write_to_csv])		# Concatenate the content of the csv with the data to delete from the worksheet
+						dfconcat.to_csv(path, sep=';', index=False, encoding='utf-8')		# Write to the csv file the result of the concatenation
+						wks.delete_rows(2, int(total_column_length/2) + 1)		# Delete data from the worksheet
+						dataframe = pd.DataFrame(wks.get_all_records())		# Get the remaining data the from worksheet into a DataFrame
+						dataframe = dataframe.append(df)		# Append the recieved data into the the DataFrame
+						set_with_dataframe(wks, dataframe)		# Write to the worksheet
 						#print('dataframe is :', dataframe)
 						print('df is :', df)
 
 				else :		# Writing data to the selected worksheet
 					try :
-						dataframe = pd.DataFrame(wks.get_all_records())
-						dataframe = dataframe.append(df)
-						set_with_dataframe(wks, dataframe)
+						dataframe = pd.DataFrame(wks.get_all_records())		# Get the remaining data the from worksheet into a DataFrame
+						dataframe = dataframe.append(df)		# Append the recieved data into the the DataFrame
+						set_with_dataframe(wks, dataframe)		# Write to the worksheet
 					except :
 						print("Step 2 Error : impossible to write to spread sheet")
 
@@ -155,7 +155,7 @@ while True :
 			respuestjson = respuest.json()
 
 			TransactionID = respuestjson.get('transactionId')          # Get new Tansaction ID from the ewon API request.
-			LastTransactionSTR = str(TransactionID)                     # 
+			LastTransactionSTR = str(TransactionID)
 			print('Transaction ID: ' + str(TransactionID))
 			Transactionsheet = sh.worksheet('Transactions')
 			Transactionsheet.update_cell(1,2, TransactionID)

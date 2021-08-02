@@ -1,3 +1,5 @@
+#This code is used to create a CSV files for for every stored variable
+
 import pygsheets
 import pandas as pd
 from pandas import ExcelWriter
@@ -21,10 +23,3 @@ for i in range(len(df['Name'])) :
 			path = 'C:/Users/admin/Desktop/McView_SKit/HRS_ROUEN_CSV_FILES/' + str(df['Name GSpreadSheet'][i]) + '.csv'
 			with open(path, 'w', encoding='UTF8', newline='') as f:
 				writer = csv.writer(f)
-
-#df = pd.read_excel('McView Exchange Table_ HRSRouen.xlsx', sheet_name ='in', header=0)
-# for i in range(len(df['Name (eWon)'])) :
-# 	if df['McView Data Historisation (YES/NO)'][i] == 'YES' :
-# 		path = 'C:/Users/admin/Desktop/McView_SKit/HRS_ROUEN_CSV_FILES/' + str(df['Name (eWon)'][i]) + '.csv'
-# 		with open(path, 'w', encoding='UTF8', newline='') as f:
-# 			writer = csv.writer(f)

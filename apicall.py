@@ -1,3 +1,9 @@
+"""
+This code is used to create worksheets, fill the headers and the first line with the following arrays :
+['Value','TimeStr','TagId','Hour','Tagname','Month','Extrainfo']
+['0','2021-05-19 14:09:00+00:00','194','14','5','19','PT x']
+"""
+
 import pygsheets
 import pandas as pd
 from pandas import ExcelWriter
@@ -43,41 +49,3 @@ for i in range(len(df['Name GSpreadSheet'])) :
 				temp_defauts = True
 		else :
 			manipulate_spsh(df['Name GSpreadSheet'][i])
-
-# for i in range(len(df['Name (eWon)'])) :
-# 	if df['McView Data Historisation (YES/NO)'][i] == 'YES' :
-# 		manipulate_spsh(df['Name (eWon)'][i])
-
-
-
-# df_drop = df.drop_duplicates('Name GSpreadSheet')
-# indexNames = df_drop[ df_drop['LogEnabled'] == 0 ].index
-# df_drop.drop(indexNames , inplace=True)
-# print(df_drop)
-# list_sheets = df_drop['Name GSpreadSheet']
-
-
-
-# for i in range(len(list_sheets)) :
-# 	creat_sheets(str(list_sheets[i]))
-
-
-# for i in range(len(list_sheets)) :
-# 	manipulate_spsh(str(list_sheets[i]))
-
-# for i in range(len(df['Name (eWon)'])) :
-# 	if df['McView Data Historisation (YES/NO)'][i] == 'YES' :
-# 		creat_sheets(df['Name (eWon)'][i])
-
-
-# for i in range(len(df['Name (eWon)'])) :
-# 	if df['McView Data Historisation (YES/NO)'][i] == 'YES' :
-# 		manipulate_spsh(df['Name (eWon)'][i])
-
-
-#df = pd.read_excel('McView Exchange Table_ HRSRouen.xlsx', sheet_name ='in', header=0)
-# for i in range(len(df['Name (eWon)'])) :
-# 	if df['McView Data Historisation (YES/NO)'][i] == 'YES' :
-# 		path = 'C:/Users/admin/Desktop/McView_SKit/HRS_ROUEN_CSV_FILES/' + str(df['Name (eWon)'][i]) + '.csv'
-# 		with open(path, 'w', encoding='UTF8', newline='') as f:
-# 			writer = csv.writer(f)
