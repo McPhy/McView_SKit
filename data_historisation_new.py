@@ -142,7 +142,7 @@ while True :
 						print("Step 2 Error : impossible to write to spread sheet")
 
 			except :
-				print("Step X Error")
+				print("Step get data Error")
 			sleep(2)
 
 
@@ -236,9 +236,12 @@ while True :
 							print("Step 2 Error : impossible to write to spread sheet")
 
 				except :
-					print("Step X Error")
+					print("Step more data available Error")
 				sleep(2)
 
 
 	except :
-		print("Step XX Error")
+		print("Step X Error")
+
+	print('Waiting for next Data Wave...')
+	sleep(3600)
